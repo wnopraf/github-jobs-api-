@@ -1,0 +1,5 @@
+export const LOAD_DATA: 'LOAD_DATA' = 'LOAD_DATA',
+  IS_LOADING: string = 'IS_LOADING',
+  IS_LOADED: string = 'IS_LOADED',
+  IS_LIGHT: 'IS_LIGHT' = 'IS_LIGHT',
+  IS_DARK: 'IS_DARK' = 'IS_DARK'

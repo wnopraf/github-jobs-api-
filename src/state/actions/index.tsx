@@ -23,7 +23,7 @@ export const loadData = ({
   } catch (error) {}
 }
 
-const bgSwitchAction = () => {
+export const bgSwitchAction = () => {
   const bgColorState = useSelector<store>((state) => state.bgColor) as BgColor
 
   switch (bgColorState) {

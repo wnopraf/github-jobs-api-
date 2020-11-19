@@ -25,12 +25,11 @@ export const loadData = ({
 
 const bgSwitchAction = () => {
   const bgColorState = useSelector<store>((state) => state.bgColor) as BgColor
-  const dispatch = useDispatch<Dispatch>()
 
   switch (bgColorState) {
     case 'IS_DARK':
-      return dispatch({ type: IS_LIGHT })
+      return { type: IS_LIGHT }
     case 'IS_LIGHT':
-      return dispatch({ type: IS_DARK })
+      return { type: IS_DARK }
   }
 }

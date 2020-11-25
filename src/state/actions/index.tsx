@@ -1,9 +1,7 @@
 import Axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux'
-import { Action, Dispatch } from 'redux'
 
 import { ThunkAction } from 'redux-thunk'
-import { Job, SearchParams, LoadDataAction, store, BgColor } from '../../types'
+import { Job, SearchParams, LoadDataAction, BgColor } from '../../types'
 import { IS_DARK, IS_LIGHT, LOAD_DATA } from '../constants'
 
 export const loadData = ({
@@ -23,9 +21,7 @@ export const loadData = ({
   } catch (error) {}
 }
 
-export const bgSwitchAction = () => {
-  const bgColorState = useSelector<store>((state) => state.bgColor) as BgColor
-
+export const bgSwitchAction = (bgColorState: BgColor) => {
   switch (bgColorState) {
     case 'IS_DARK':
       return { type: IS_LIGHT }

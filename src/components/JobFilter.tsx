@@ -147,8 +147,12 @@ export const MobileJobsForm: FunctionComponent = () => {
   )
 }
 
-const StyledTextInput = styled.input`
+const StyledTextInput = styled.input<{ control: string }>`
   padding: 1rem;
+  position: absolute;
+  top:0;
+  left: 0;
+  z-index: ${(props) => (props.control === 'title' ? 10 : 0)}
   ${mediaHelper().tablet(`padding: 0;`)}
   border: none;
   outline: none;
@@ -167,8 +171,11 @@ const StyledTextInput = styled.input`
   ${mediaHelper().tablet(`
     margin-right: none;
   `)}
+  const
 `
-export const TitleJobFilter: FunctionComponent = () => {
+export const TitleJobFilter: FunctionComponent<{ control: string }> = ({
+  control
+}) => {
   const { formState, changeHandler, dispatch, jobFormState } = useContext(
     FormContext
   )
@@ -188,11 +195,14 @@ export const TitleJobFilter: FunctionComponent = () => {
       onChange={changeHandler}
       className="title-input"
       placeholder="Filter by title..."
+      control={control}
     />
   )
 }
 
-export const LocationJobFilter: FunctionComponent = () => {
+export const LocationJobFilter: FunctionComponent<{ control: string }> = ({
+  control
+}) => {
   const { formState, changeHandler, jobFormState } = useContext(FormContext)
   const [locationValue, setLocationValue] = useState('')
   const titleValueHandler: ReactEventHandler = (e) => {
@@ -207,13 +217,17 @@ export const LocationJobFilter: FunctionComponent = () => {
       onChange={changeHandler}
       className="location-input"
       placeholder="Filter by location..."
+      control
     />
   )
 }
-const StyledCheckInput = styled.div`
+const StyledCheckInput = styled.div<{ control: string }>`
   display: flex;
   align-items: center;
-
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: ${(props) => (props.control === 'fullTime' ? 10 : 0)}
   margin-right: auto;
 
   .full-time--wrapper {
@@ -267,7 +281,9 @@ const StyledCheckInput = styled.div`
     opacity: 1;
   }
 `
-export const FullTimeJobFilter: FunctionComponent = () => {
+export const FullTimeJobFilter: FunctionComponent<{ control: string }> = ({
+  control
+}) => {
   const { formState, changeHandler, jobFormState } = useContext(FormContext)
 
   const fullTimeHandler: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -284,6 +300,7 @@ export const FullTimeJobFilter: FunctionComponent = () => {
           data-form="fullTime"
           checked={jobFormState.fullTime}
           onChange={changeHandler}
+          control={control}
         />
         <span className="full-time--fake-checkbox"></span>
       </span>
@@ -425,7 +442,9 @@ export const FormPicker = () => {
   }
   return (
     <StyledDivFilterWrapper>
-      <SelectForm formFilter={pickedForm} />
+      <TitleJobFilter control={pickedForm} />
+      <LocationJobFilter control={pickedForm} />
+      <FullTimeJobFilter control={pickedForm} />
       <span className="filter-icon">
         <TiFilter onClick={openFilterHandler} />
         <StyledUlFormPicker

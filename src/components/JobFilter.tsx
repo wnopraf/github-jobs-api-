@@ -44,11 +44,22 @@ type FormActionConstants =
   | 'SETLOCATION'
   | 'SETFULLTIME'
   | 'RESET_DEFAULT'
-type FormAction = { payLoad?: string | boolean } & Action<FormActionConstants>
-type FormContext = { jobsFormState: FormState; dispatch: Dispatch<FormAction> }
+  | 'MERGE_ALL'
+type FormAction = {
+  payLoad?: string | boolean | JobSearch
+} & Action<FormActionConstants>
+type FormContext = {
+  formState: FormState
+  dispatch?: Dispatch<FormAction>
+  changeHandler: ReactEventHandler
+  formHandler: ReactEventHandler
+}
 type FormPickerValues = 'TITLE' | 'LOCATION' | 'FULLTIME'
 const FormContext = createContext({} as FormContext)
-
+let title: string = '',
+  location: string = '',
+  fullTime: boolean = false
+const formState: FormState = { title: '', location: '', fullTime: false }
 const formReducer: Reducer<FormState, FormAction> = (
   state = { title: '', location: '', fullTime: false },
   action
@@ -62,17 +73,41 @@ const formReducer: Reducer<FormState, FormAction> = (
       return { ...state, fullTime: action.payLoad as boolean }
     case 'RESET_DEFAULT':
       return { title: '', location: '', fullTime: false }
+    case 'MERGE_ALL':
+      return { ...state, ...(action.payLoad as JobSearch) }
   }
 }
 
 export const MobileJobsForm: FunctionComponent = () => {
-  const [jobsFormState, dispatch] = useReducer(formReducer, {
+  const [jobFormState, dispatch] = useReducer(formReducer, {
     title: '',
     location: '',
     fullTime: false
   })
 
-  useEffect(() => {
+  const changeHandler: ReactEventHandler<HTMLInputElement> = (e) => {
+    console.log('change form handler', e.type)
+
+    switch ((e.target as HTMLInputElement).dataset.form) {
+      case 'title':
+        dispatch({ type: 'SETTITLE', payLoad: e.target.value })
+        break
+      case 'location':
+        dispatch({ type: 'SETLOCATION', payLoad: e.target.value })
+        break
+      case 'fullTime':
+        dispatch({ type: 'SETFULLTIME', payLoad: e.target.checked })
+        break
+    }
+  }
+  const thunkDispatch = useDispatch()
+  const formHandler: ReactEventHandler = () => {
+    thunkDispatch(loadData(formState))
+  }
+  const switchInputHandler: ReactEventHandler = (e) => {
+    dispatch({ type: 'MERGE_ALL', payLoad: { title, location, fullTime } })
+  }
+  /* useEffect(() => {
     const focusOutHandler: EventListener = (e) => {
       console.log('focusout handler', e.type)
 
@@ -93,14 +128,17 @@ export const MobileJobsForm: FunctionComponent = () => {
     return () => {
       window.removeEventListener('focusout', focusOutHandler)
     }
-    /* Este evento debe registrarse en el componente padre, ya que los formularions se montan y desmontan en el select, registrando
-    y desregistrando contuinamente el evento */
-  }, [])
+    
+  }, []) */
   const jobs = useSelector<Store>((store) => store.jobs)
+  console.log('form filter state', jobFormState)
+
   console.log('jobs data state', jobs)
 
   return (
-    <FormContext.Provider value={{ jobsFormState, dispatch }}>
+    <FormContext.Provider
+      value={{ formState, changeHandler, formHandler, dispatch, jobFormState }}
+    >
       <MobileJobsWrapper>
         <FormPicker />
         <TabletFormInputs />
@@ -131,16 +169,23 @@ const StyledTextInput = styled.input`
   `)}
 `
 export const TitleJobFilter: FunctionComponent = () => {
-  const {
-    jobsFormState: { title }
-  } = useContext(FormContext)
-  console.log('filter title', title)
+  const { formState, changeHandler, dispatch, jobFormState } = useContext(
+    FormContext
+  )
+  console.log('filter title', jobFormState.title)
+  const [titleValue, setTitleValue] = useState('')
+
+  const titleValueHandler: ReactEventHandler = (e) => {
+    setTitleValue(e.target.value)
+    formState.title = e.target.value
+  }
 
   return (
     <StyledTextInput
       type="text"
       data-form="title"
-      defaultValue={title}
+      value={jobFormState.title}
+      onChange={changeHandler}
       className="title-input"
       placeholder="Filter by title..."
     />
@@ -148,15 +193,18 @@ export const TitleJobFilter: FunctionComponent = () => {
 }
 
 export const LocationJobFilter: FunctionComponent = () => {
-  const {
-    jobsFormState: { location }
-  } = useContext(FormContext)
-
+  const { formState, changeHandler, jobFormState } = useContext(FormContext)
+  const [locationValue, setLocationValue] = useState('')
+  const titleValueHandler: ReactEventHandler = (e) => {
+    setLocationValue(e.target.value)
+    formState.location = e.target.value
+  }
   return (
     <StyledTextInput
       type="text"
       data-form="location"
-      defaultValue={location}
+      value={jobFormState.location}
+      onChange={changeHandler}
       className="location-input"
       placeholder="Filter by location..."
     />
@@ -220,23 +268,22 @@ const StyledCheckInput = styled.div`
   }
 `
 export const FullTimeJobFilter: FunctionComponent = () => {
-  const {
-    jobsFormState: { fullTime },
-    dispatch
-  } = useContext(FormContext)
+  const { formState, changeHandler, jobFormState } = useContext(FormContext)
 
   const fullTimeHandler: ChangeEventHandler<HTMLInputElement> = (event) => {
-    dispatch({ type: 'SETFULLTIME', payLoad: event.target.checked })
+    setFullTimeValue(!fullTimeValue)
+    formState.fullTime = !fullTimeValue
   }
-
+  const [fullTimeValue, setFullTimeValue] = useState(false)
   return (
     <StyledCheckInput>
       <span className="full-time--wrapper">
         <input
           type="checkbox"
           className="full-time--input"
-          checked={fullTime}
-          onChange={fullTimeHandler}
+          data-form="fullTime"
+          checked={jobFormState.fullTime}
+          onChange={changeHandler}
         />
         <span className="full-time--fake-checkbox"></span>
       </span>
@@ -334,10 +381,10 @@ export const FormPicker = () => {
   const openFilterHandler: ReactEventHandler = (e) => {
     setIsopen((prevSate) => !prevSate)
   }
-  const { jobsFormState, dispatch } = useContext(FormContext)
+  const { formState, formHandler } = useContext(FormContext)
   const thunkDispatch = useDispatch()
   const selectionHandler: ReactEventHandler<HTMLElement> = (e) => {
-    console.log(jobsFormState)
+    console.log(formState, 'formSelection')
 
     switch ((e.target as HTMLElement).dataset.jobFilter) {
       case 'title':
@@ -360,6 +407,8 @@ export const FormPicker = () => {
     await thunkDispatch(loadData({ title, location, fullTime }))
     dispatch({ type: 'RESET_DEFAULT' })
   }
+  let title, location, fullTime
+  const setTitleHandler: ReactEventHandler = () => {}
   const SelectForm: FunctionComponent<{ formFilter: string }> = ({
     formFilter
   }) => {
@@ -392,7 +441,7 @@ export const FormPicker = () => {
         </StyledUlFormPicker>
       </span>
 
-      <span className="search-icon" onClick={getDataHandler}>
+      <span className="search-icon" onClick={formHandler}>
         <BiSearchAlt2 />
       </span>
     </StyledDivFilterWrapper>
@@ -445,13 +494,13 @@ export const TabletFormInputs = () => {
     unknown,
     LoadDataAction
   > = useDispatch()
-  const { jobsFormState, dispatch } = useContext(FormContext)
+  const { formState, dispatch, formHandler } = useContext(FormContext)
 
   const clickLoadDataHandler: ReactEventHandler = async () => {
     await thunkDispatch(loadData(jobsFormState))
     dispatch({ type: 'RESET_DEFAULT' })
   }
-  console.log('form state', jobsFormState)
+  console.log('form state', formState)
   return (
     <StyledFormTabletWrapper>
       <div className="title">
@@ -464,7 +513,7 @@ export const TabletFormInputs = () => {
       </div>
       <div className="full-time">
         <FullTimeJobFilter />
-        <span className="search" onClick={clickLoadDataHandler}>
+        <span className="search" onClick={formHandler}>
           search
         </span>
       </div>

@@ -23,6 +23,7 @@ import { loadData } from '../state/actions'
 import { JobSearch, LoadDataAction, Store } from '../types'
 import { mediaHelper } from '../lib/mediaUtil'
 import { ThunkDispatch } from 'redux-thunk'
+import { useMediaTablet } from '../lib/Hooks'
 
 const MobileJobsWrapper = styled.div`
   padding: 1rem;
@@ -137,13 +138,10 @@ const StyledTextTitle = styled.input<{ control?: string }>`
   }
   margin-right: auto;
   width: 60%;
-  ${mediaHelper().phone(`
-    width: auto;
-  `)}
   ${mediaHelper().tablet(`
+    width: 100%;
     margin-right: none;
   `)}
-  
 `
 
 const StyledTextLocation = styled(StyledTextTitle)`
@@ -157,6 +155,7 @@ export const TitleJobFilter: FunctionComponent<{ control?: string }> = ({
 }) => {
   const { changeHandler, jobsFormState } = useContext(FormContext)
   console.log('filter title', jobsFormState.title)
+  const isDesktop = useMediaTablet()
 
   return (
     <StyledTextTitle
@@ -165,7 +164,11 @@ export const TitleJobFilter: FunctionComponent<{ control?: string }> = ({
       value={jobsFormState.title}
       onChange={changeHandler}
       className="title-input"
-      placeholder="Filter by title..."
+      placeholder={
+        isDesktop
+          ? 'Filter by title, companies, expertise...'
+          : 'Filter by title...'
+      }
       control={control}
     />
   )
@@ -209,8 +212,6 @@ const StyledCheckInput = styled.div<{ control?: string }>`
     height: 30px;
   }
   label {
-    font-weight: bold;
-    font-size: 1.3rem;
   }
   .full-time--input {
     top: 0;
@@ -226,11 +227,24 @@ const StyledCheckInput = styled.div<{ control?: string }>`
     position: absolute;
     top: 0;
     left: 0;
-    width: 32px;
+    width: 30px;
     height: 30px;
+    ${mediaHelper().desktop(`
+      width: 25px;
+      height: 25px;
+    
+    `)}
     background: rgb(230 229 229);
     border-radius: 0.2rem;
     cursor: pointer;
+  }
+  .full-time--label {
+    font-weight: bold;
+    font-size: 1.3rem;
+    text-transform: capitalize;
+    ${mediaHelper().desktop(`
+      font-size: 1.1rem;
+    `)}
   }
   .full-time--fake-checkbox::after {
     content: '';
@@ -238,14 +252,19 @@ const StyledCheckInput = styled.div<{ control?: string }>`
     display: block;
     left: 10px;
     top: 2px;
-    width: 12px;
-    height: 20px;
+    width: 40%;
+    height: 70%;
+    margin-bottom: 5px;
     border: solid darkslategray;
     border-width: 0 5px 5px 0;
-
+    ${mediaHelper().desktop(`
+      border-width: 0 4px 4px 0;
+    `)}
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
     transform: rotate(45deg);
     opacity: 0;
-
+    -webkit-transition: all 200ms ease-in-out;
     transition: all 200ms ease-in-out;
   }
 
@@ -257,7 +276,7 @@ export const FullTimeJobFilter: FunctionComponent<{ control?: string }> = ({
   control
 }) => {
   const { changeHandler, jobsFormState } = useContext(FormContext)
-
+  const isDesktop = useMediaTablet()
   return (
     <StyledCheckInput control={control}>
       <span className="full-time--wrapper">
@@ -270,7 +289,9 @@ export const FullTimeJobFilter: FunctionComponent<{ control?: string }> = ({
         />
         <span className="full-time--fake-checkbox"></span>
       </span>
-      <label>Full Time</label>
+      <label className="full-time--label">
+        {isDesktop ? 'full time only' : 'full time'}
+      </label>
     </StyledCheckInput>
   )
 }
@@ -430,11 +451,15 @@ const StyledFormTabletWrapper = styled.div`
 
   .search {
     padding: 1rem 0.5rem;
-    margin-left: 1.5rem;
+    ${mediaHelper().desktop(`
+    padding: 1rem 2.5rem;
+    
+    `)}
+    margin-left: auto;
     color: white;
     background: var(--color-purple-0);
     font-size: 1.25rem;
-    font-weight: bold;
+    font-weight: 500;
     text-transform: capitalize;
     letter-spacing: 1.5px;
     cursor: pointer;
@@ -451,8 +476,16 @@ const StyledFormTabletWrapper = styled.div`
     height: 90px;
     padding: 1rem;
   }
+  .title {
+    ${mediaHelper().desktop(`
+      width: 40%;
+    
+    `)}
+  }
   .full-time {
     width: 40%;
+  }
+  .location {
   }
   .input-icon {
     font-size: 2rem;

@@ -23,17 +23,17 @@ import { loadData } from '../state/actions'
 import { JobSearch, LoadDataAction, Store } from '../types'
 import { mediaHelper } from '../lib/mediaUtil'
 import { ThunkDispatch } from 'redux-thunk'
-import { useMediaTablet } from '../lib/Hooks'
+import { useMediaPoint } from '../lib/Hooks'
+import { HeightContext } from './Header'
 
 const MobileJobsWrapper = styled.div`
-  padding: 1rem;
+  padding: 1rem 0;
   width: 100%;
-  max-width: 450px;
+
+  margin: 0 auto;
   ${mediaHelper().tablet(`
     max-width: 100%;
   `)}
-  .selectable: {
-  }
 `
 
 type FormState = { title: string; location: string; fullTime: boolean }
@@ -95,19 +95,16 @@ export const MobileJobsForm: FunctionComponent = () => {
         break
     }
   }
-  const thunkDispatch = useDispatch()
-  const formHandler: ReactEventHandler = () => {
-    thunkDispatch(loadData(jobsFormState))
-  }
 
   const jobs = useSelector<Store>((store) => store.jobs)
+  const heightMeasurer = useContext(HeightContext)
   console.log('form filter state', jobsFormState)
 
   console.log('jobs data state', jobs)
 
   return (
     <FormContext.Provider value={{ changeHandler, dispatch, jobsFormState }}>
-      <MobileJobsWrapper>
+      <MobileJobsWrapper ref={heightMeasurer}>
         <FormPicker />
         <TabletFormInputs />
       </MobileJobsWrapper>
@@ -155,7 +152,7 @@ export const TitleJobFilter: FunctionComponent<{ control?: string }> = ({
 }) => {
   const { changeHandler, jobsFormState } = useContext(FormContext)
   console.log('filter title', jobsFormState.title)
-  const isDesktop = useMediaTablet()
+  const { isDesktop } = useMediaPoint()
 
   return (
     <StyledTextTitle
@@ -276,7 +273,7 @@ export const FullTimeJobFilter: FunctionComponent<{ control?: string }> = ({
   control
 }) => {
   const { changeHandler, jobsFormState } = useContext(FormContext)
-  const isDesktop = useMediaTablet()
+  const { isDesktop } = useMediaPoint()
   return (
     <StyledCheckInput control={control}>
       <span className="full-time--wrapper">
@@ -451,7 +448,7 @@ const StyledFormTabletWrapper = styled.div`
 
   .search {
     padding: 1rem 0.5rem;
-    ${mediaHelper().desktop(`
+    ${mediaHelper().lageDesktop(`
     padding: 1rem 2.5rem;
     
     `)}

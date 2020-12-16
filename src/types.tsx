@@ -1,7 +1,7 @@
 import { Action } from 'redux'
 
 export type LoadDataAction = Action<'LOAD_DATA'> & {
-  payload: JobSearch[]
+  payload: JobsDescription[]
 }
 
 export type LoadingAction = Action<Loading>
@@ -22,4 +22,14 @@ export interface Store {
   jobs: JobSearch[]
   loading: Loading
   bgColor: BgColor
+}
+
+export interface JobsDescription {
+  id: string
+  type: 'Full Time' | 'Part Time'
+  created_at: string
+  company: string
+  location: string
+  title: string
+  company_logo: string
 }

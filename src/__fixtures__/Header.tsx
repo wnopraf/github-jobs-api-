@@ -7,10 +7,11 @@ const FakeBody = styled.div`
   background: rgb(234 234 234);
   padding-bottom: 5rem;
 `
-export default () => (
+export default ({ children }) => (
   <Provider store={store}>
     <FakeBody>
       <Header />
+      {children}
     </FakeBody>
   </Provider>
 )

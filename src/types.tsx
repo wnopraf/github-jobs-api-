@@ -19,8 +19,8 @@ export type BgColorAction = Action<BgColor>
 export type Loading = 'IS_LOADING' | 'IS_LOADED'
 
 export interface Store {
-  jobs: JobSearch[]
-  loading: Loading
+  jobs: JobsDescription[]
+  loader: Loading
   bgColor: BgColor
 }
 

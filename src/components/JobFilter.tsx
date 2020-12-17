@@ -19,12 +19,14 @@ import { TiFilter } from 'react-icons/ti'
 import { MdLocationOn } from 'react-icons/md'
 import { BiSearchAlt2 } from 'react-icons/bi'
 import { useDispatch, useSelector } from 'react-redux'
+
 import { loadData } from '../state/actions'
-import { JobSearch, LoadDataAction, Store } from '../types'
+import { JobSearch, LoadDataAction, LoadingAction, Store } from '../types'
 import { mediaHelper } from '../lib/mediaUtil'
 import { ThunkDispatch } from 'redux-thunk'
 import { useMediaPoint } from '../lib/Hooks'
 import { HeightContext } from './Header'
+import { IS_LOADED, IS_LOADING } from '../state/constants'
 
 const MobileJobsWrapper = styled.div`
   padding: 1rem 0;
@@ -386,6 +388,7 @@ export const FormPicker = () => {
   }
   const { jobsFormState, dispatch } = useContext(FormContext)
   const thunkDispatch = useDispatch()
+  const loadingDispatch = useDispatch<Dispatch<LoadingAction>>()
   const selectionHandler: ReactEventHandler<HTMLElement> = (e) => {
     console.log(jobsFormState, 'formSelection')
 
@@ -406,9 +409,11 @@ export const FormPicker = () => {
   }
 
   const getDataHandler: ReactEventHandler = async (e) => {
+    loadingDispatch({ type: 'IS_LOADING' })
     const { title, location, fullTime } = jobsFormState
     await thunkDispatch(loadData({ title, location, fullTime }))
     dispatch({ type: 'RESET_DEFAULT' })
+    loadingDispatch({ type: 'IS_LOADED' })
   }
 
   return (
@@ -496,11 +501,14 @@ export const TabletFormInputs = () => {
     unknown,
     LoadDataAction
   > = useDispatch()
+  const loadingDispatch = useDispatch<Dispatch<LoadingAction>>()
   const { dispatch, jobsFormState } = useContext(FormContext)
 
   const clickLoadDataHandler: ReactEventHandler = async () => {
+    loadingDispatch({ type: IS_LOADING })
     await thunkDispatch(loadData(jobsFormState))
     dispatch({ type: 'RESET_DEFAULT' })
+    loadingDispatch({ type: IS_LOADED })
   }
   console.log('form state', jobsFormState)
   return (

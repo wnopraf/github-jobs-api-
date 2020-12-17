@@ -68,19 +68,6 @@ export const ToggleBgSwitch: FunctionComponent<{
   const switchStateRef = useRef<BgColor>('IS_LIGHT')
   switchStateRef.current = switchState
   const dispatch: Dispatch<BgColorAction> = useDispatch()
-  useEffect(() => {
-    const endTransitionSwithcHandler: ReactEventHandler = () => {
-      dispatch(bgSwitchAction(switchStateRef.current))
-    }
-
-    window.addEventListener('transitionend', endTransitionSwithcHandler as any)
-    return () => {
-      window.removeEventListener(
-        'transitionend',
-        endTransitionSwithcHandler as any
-      )
-    }
-  }, [])
 
   useEffect(() => {
     console.log(bgState, 'bgState')
@@ -102,6 +89,11 @@ export const ToggleBgSwitch: FunctionComponent<{
         switchPos={switchState}
         barWidth={barwidth}
         onClick={switchHandler}
+        onTransitionEnd={() => {
+          console.log('transitionend event')
+
+          dispatch(bgSwitchAction(switchStateRef.current))
+        }}
       >
         <div className="toggle-switcher--switcher"></div>
       </ToggleBgSwitchBar>

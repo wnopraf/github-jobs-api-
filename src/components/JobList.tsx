@@ -40,7 +40,7 @@ const StyledDiv$jobLists = styled.div`
   margin-top: 10rem;
   display: grid;
   grid-template-columns: 1fr;
-  grid-auto-rows: 230px;
+  grid-auto-rows: auto;
   grid-gap: 1rem 0;
   ${mediaHelper().tablet(`
   grid-template-columns: 1fr 1fr;

@@ -3,7 +3,7 @@ import { LoadingAction } from '../../types'
 import { IS_LOADED, IS_LOADING } from '../constants'
 
 export const loaderReducer: Reducer<boolean, LoadingAction> = (
-  state = true,
+  state = false,
   { type }
 ) => {
   switch (type) {

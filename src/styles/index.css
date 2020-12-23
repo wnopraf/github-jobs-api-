@@ -4,6 +4,14 @@
   box-sizing: border-box;
 }
 :root {
-  --color-purple-0: rgb(99 113 255);
+  --color-purple-0: rgb(96 110 247);
   font-family: 'Roboto', sans-serif;
+}
+a {
+  text-decoration: none;
+}
+button {
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
 }

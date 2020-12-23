@@ -1,4 +1,9 @@
-import React, { useCallback, useState } from 'react'
+import React, {
+  Children,
+  FunctionComponent,
+  useCallback,
+  useState
+} from 'react'
 import styled from 'styled-components'
 import { useMediaPhone, useMediaPoint } from '../lib/Hooks'
 import { mediaHelper } from '../lib/mediaUtil'
@@ -12,6 +17,8 @@ export const HeightContext = React.createContext<(node: HTMLElement) => void>(
 )
 const StyledHeader = styled.header<{ formHeight: number }>`
   background-color: var(--color-purple-0);
+  height: 160px;
+  margin-bottom: -45px;
   ${mediaHelper().tablet(`
   border-bottom-left-radius: 5rem;
   
@@ -34,7 +41,7 @@ const StyledHeader = styled.header<{ formHeight: number }>`
     }
   }
 `
-export const Header = () => {
+export const Header: FunctionComponent = ({ children }) => {
   const [formHeight, setFormHeight] = useState(0)
   const { isPhone } = useMediaPoint()
   const heightMeasurer = useCallback(
@@ -56,11 +63,6 @@ export const Header = () => {
           <div className="header--title">
             <h1>devjobs</h1>
             <ToggleBgSwitch barwidth={isPhone ? 60 : 30} />
-          </div>
-          <div className="header--form">
-            <HeightContext.Provider value={heightMeasurer}>
-              <MobileJobsForm />
-            </HeightContext.Provider>
           </div>
         </div>
       </Container>

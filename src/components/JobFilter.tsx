@@ -29,7 +29,6 @@ import { HeightContext } from './Header'
 import { IS_LOADED, IS_LOADING } from '../state/constants'
 
 const MobileJobsWrapper = styled.div`
-  padding: 1rem 0;
   width: 100%;
 
   margin: 0 auto;
@@ -466,6 +465,10 @@ const StyledFormTabletWrapper = styled.div`
     letter-spacing: 1.5px;
     cursor: pointer;
     border-radius: 0.3rem;
+    transition: background-color 250ms linear;
+    &:hover {
+      background-color: rgb(75 89 230);
+    }
   }
   > * {
     display: flex;

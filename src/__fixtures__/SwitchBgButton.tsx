@@ -9,7 +9,7 @@ import { store } from '../state'
 import '../styles/index.css'
 
 const FakeBgWrapper = styled.div`
-  background: rgb(141 152 234);
+  background: var(--color-purple-0);
 `
 
 const TestProvider: FunctionComponent = ({ children }) => {

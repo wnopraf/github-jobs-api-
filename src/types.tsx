@@ -31,5 +31,7 @@ export interface JobsDescription {
   company: string
   location: string
   title: string
+  description: string
   company_logo: string
+  company_url: string
 }

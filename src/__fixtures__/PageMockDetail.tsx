@@ -1,3 +1,4 @@
+import { Link, Router } from '@reach/router'
 import React from 'react'
 import { Provider } from 'react-redux'
 import styled from 'styled-components'
@@ -23,12 +24,12 @@ const fakeJob: JobsDescription = {
   id: '324524309',
   location: 'Malaga'
 }
+const Home = () => <Link to="/619735aa-7ba6-473b-bc9e-8e5b84d7a1b5">Home</Link>
 export default () => (
   <Provider store={store}>
     <FakeBody>
       <Header></Header>
-
-      <JobDetail {...fakeJob} />
+      <JobDetail jobId={'619735aa-7ba6-473b-bc9e-8e5b84d7a1b5'} />
     </FakeBody>
   </Provider>
 )

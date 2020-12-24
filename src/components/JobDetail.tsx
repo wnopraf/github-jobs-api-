@@ -1,9 +1,14 @@
-import React, { FunctionComponent } from 'react'
+import { useParams } from '@reach/router'
+import Axios from 'axios'
+import React, { FunctionComponent, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { mediaHelper } from '../lib/mediaUtil'
 import { timeAgo } from '../lib/util'
+import { IS_LOADED, IS_LOADING } from '../state/constants'
 
-import { JobsDescription } from '../types'
+import { JobsDescription, Store } from '../types'
+import Loader from '../__fixtures__/Loader'
 import { Container } from './Container'
 
 const JobWrapper = styled.div`
@@ -14,6 +19,7 @@ const StyledJob = styled.div<{ bg: string }>`
 max-width: 760px;
 min-height: 80vh;
 margin: 0 auto;
+color: var(--color-gray-detail-font);
   .detail-job--header  {
     display: flex;
     
@@ -21,13 +27,13 @@ margin: 0 auto;
     border-radius: .3rem;
     
     .detail-job--logo  {
-        width: 90px;
-    height: 90px;
-    background-image: ${(props) => props.bg};
-      background-size: 50px 50px;
+        
+    background-image: url(${(props) => props.bg});
+      background-size: contain;
       background-position: center center;
       background-color: rgb(255 139 227);
       border-bottom-left-radius: .3rem;
+      background-repeat: no-repeat;
       ${mediaHelper().tablet(`
       width: 180px;
       height: 180px;
@@ -50,6 +56,7 @@ margin: 0 auto;
       
       .item-names .item-names--primary {
           font-size: 1.3rem;
+          color: black;
           margin-bottom: .5rem;
           text-transform: capitalize;
         
@@ -67,7 +74,7 @@ margin: 0 auto;
     }
       
       .detail-job--company .item-names--secondary {
-        color: rgb(179 179 179);
+        
         ${mediaHelper().tablet(`
           
         font-weight: 500;
@@ -97,12 +104,15 @@ margin: 0 auto;
   }
   .detail-job--features {
     margin-top: 3rem;
-    padding: 1rem;
+    padding: 1rem 3rem;
     background: white;
-    color: rgb(179 179 179);
 }
 .detail-job-summary {
 position: relative;
+display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
 .detail-job--posted-date {
     margin: 0;
     font-weight: 500;
@@ -110,7 +120,7 @@ position: relative;
 .detail-job--title {
     margin:0;
     font-size: 1.6rem;
-    line-height: .5;
+    margin: -5px 0;
     color: black;
     text-transform: capitalize;
     letter-spacing: 1px;
@@ -126,7 +136,26 @@ position: relative;
 
 }
 .detail-job--description {
-    line-height: 1.6;
+    line-height: 1.65;
+    h2 {
+      color: black;
+      font-size: 1.2rem;
+    }
+    a {
+      font-weight: bold;
+    color: var(--color-purple-0);
+    }
+    li{
+      padding: 1rem 0;
+      list-style-position: inside;
+      &::marker {
+        color: var(--color-purple-0);
+      }
+      &::before {
+        content: '';
+        margin-right: 1rem;
+      }
+    }
 }
 .apply-box {
     margin-top: 3rem;
@@ -154,44 +183,80 @@ position: relative;
 
 `
 
-export const JobDetail: FunctionComponent<JobsDescription> = ({
-  company_logo,
-  company_url,
-  company,
-  description,
-  location,
-  created_at,
-  title,
-  type
-}) => {
-  return (
+export const JobDetail: FunctionComponent<{ jobId: string }> = ({ jobId }) => {
+  const [jobDescription, setJobDescription] = useState<JobsDescription>()
+  const isLoading = useSelector<Store>((state) => state.loader)
+  const dispatch = useDispatch()
+
+  /* const { jobId }: { jobId: string } = useParams() */
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        dispatch({ type: IS_LOADING })
+        const { data } = await Axios.get<JobsDescription>(
+          `https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions/${jobId}.json`
+        )
+        console.log(data, 'data')
+
+        setJobDescription(data)
+        dispatch({ type: IS_LOADED })
+      } catch (error) {
+        console.log(error, 'fetch data error')
+      } finally {
+        dispatch({ type: IS_LOADED })
+      }
+    })()
+  }, [])
+  console.log(isLoading, 'loading')
+  console.log(jobDescription, 'job')
+
+  return isLoading || jobDescription === undefined ? (
+    <Loader />
+  ) : (
     <JobWrapper>
-      <StyledJob bg={company_logo}>
-        <Container>
+      <Container>
+        <StyledJob bg={jobDescription!.company_logo}>
           <header className="detail-job--header">
             <div className="detail-job--logo"></div>
             <div className="detail-job--company">
               <div className="item-names">
-                <h3 className="item-names--primary">{company}</h3>
-                <span className="item-names--secondary">{company + '.co'}</span>
+                <h1 className="item-names--primary">
+                  {jobDescription!.company}
+                </h1>
+                <span className="item-names--secondary">
+                  {jobDescription!.company + '.co'}
+                </span>
               </div>
-              <a href={company_url} className="detail-job--company-link">
+              <a
+                href={jobDescription!.company_url}
+                className="detail-job--company-link"
+              >
                 company site
               </a>
             </div>
           </header>
           <div className="detail-job--features">
             <div className="detail-job-summary">
-              <p>
-                <span className="detail-job--posted-date">
-                  {timeAgo(created_at)} • {type}
-                </span>
-              </p>
-              <h2 className="detail-job--title">{title}</h2>
-              <p className="detail-job--location">{location}</p>
-              <ApplyButtonPositioned>apply button</ApplyButtonPositioned>
+              <div className="summary-wrapper">
+                <p>
+                  <span className="detail-job--posted-date">
+                    {timeAgo(jobDescription!.created_at)} •{' '}
+                    {jobDescription!.type}
+                  </span>
+                </p>
+                <h2 className="detail-job--title">{jobDescription!.title}</h2>
+                <p className="detail-job--location">
+                  {jobDescription!.location}
+                </p>
+              </div>
+
+              <ApplyButton>apply button</ApplyButton>
             </div>
-            <div className="detail-job--description">{description}</div>
+            <div
+              className="detail-job--description"
+              dangerouslySetInnerHTML={{ __html: jobDescription!.description }}
+            ></div>
           </div>
           <div className="apply-box">
             <h3 className="apply-box--title">how to apply</h3>
@@ -205,14 +270,16 @@ export const JobDetail: FunctionComponent<JobsDescription> = ({
               how to apply link
             </a>
           </div>
-        </Container>
-      </StyledJob>
+        </StyledJob>
+      </Container>
       <Footer>
         <Container>
           <div className="footer-content">
             <div className="apply-reminder">
-              <h3>{title}</h3>
-              <p className="apply-reminder--company">{company}</p>
+              <h3>{jobDescription!.title}</h3>
+              <p className="apply-reminder--company">
+                {jobDescription!.company}
+              </p>
             </div>
             <ApplyButton>apply button</ApplyButton>
           </div>
@@ -241,10 +308,6 @@ const ApplyButtonPositioned = styled(ApplyButton)`
 `
 
 const Footer = styled.footer`
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-
   background: white;
   margin-top: 3rem;
   .footer-content {

@@ -5,6 +5,7 @@
 }
 :root {
   --color-purple-0: rgb(96 110 247);
+  --color-gray-detail-font: rgb(167 167 167);
   font-family: 'Roboto', sans-serif;
 }
 a {
@@ -14,4 +15,8 @@ button {
   border: none;
   font-family: inherit;
   cursor: pointer;
+}
+
+ul {
+  padding: 0;
 }

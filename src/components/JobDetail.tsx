@@ -29,7 +29,7 @@ color: var(--color-gray-detail-font);
     .detail-job--logo  {
         
     background-image: url(${(props) => props.bg});
-      background-size: contain;
+      background-size: 50%;
       background-position: center center;
       background-color: rgb(255 139 227);
       border-bottom-left-radius: .3rem;
@@ -82,23 +82,7 @@ color: var(--color-gray-detail-font);
           `)}
         
       }
-      .detail-job--company-link {
-        padding: 1rem;
-    background: #e4e6fe;
-    border-radius: .3rem;
-    max-width: -webkit-fit-content;
-    max-width: -moz-fit-content;
-    max-width: fit-content;
-    height: -webkit-fit-content;
-    height: -moz-fit-content;
-    height: fit-content;
-    margin-left: auto;
-    color: var(--color-purple-0);
-    font-weight: bold;
-    text-transform: capitalize;
-    letter-spacing: .5px;
-    font-size: 1.05rem;
-      }
+      
     }
     
   }
@@ -183,12 +167,12 @@ display: flex;
 
 `
 
-export const JobDetail: FunctionComponent<{ jobId: string }> = ({ jobId }) => {
+export const JobDetail: FunctionComponent = () => {
   const [jobDescription, setJobDescription] = useState<JobsDescription>()
   const isLoading = useSelector<Store>((state) => state.loader)
   const dispatch = useDispatch()
 
-  /* const { jobId }: { jobId: string } = useParams() */
+  const { jobId }: { jobId: string } = useParams()
 
   useEffect(() => {
     ;(async () => {
@@ -228,12 +212,9 @@ export const JobDetail: FunctionComponent<{ jobId: string }> = ({ jobId }) => {
                   {jobDescription!.company + '.co'}
                 </span>
               </div>
-              <a
-                href={jobDescription!.company_url}
-                className="detail-job--company-link"
-              >
+              <HeaderButton as="a" href={jobDescription!.company_url}>
                 company site
-              </a>
+              </HeaderButton>
             </div>
           </header>
           <div className="detail-job--features">
@@ -251,7 +232,7 @@ export const JobDetail: FunctionComponent<{ jobId: string }> = ({ jobId }) => {
                 </p>
               </div>
 
-              <ApplyButton>apply button</ApplyButton>
+              <Button>apply button</Button>
             </div>
             <div
               className="detail-job--description"
@@ -281,7 +262,7 @@ export const JobDetail: FunctionComponent<{ jobId: string }> = ({ jobId }) => {
                 {jobDescription!.company}
               </p>
             </div>
-            <ApplyButton>apply button</ApplyButton>
+            <Button>apply button</Button>
           </div>
         </Container>
       </Footer>
@@ -289,7 +270,8 @@ export const JobDetail: FunctionComponent<{ jobId: string }> = ({ jobId }) => {
   )
 }
 
-const ApplyButton = styled.button`
+const Button = styled.button`
+  margin-left: auto;
   height: max-content;
   color: white;
   font-size: 1.15rem;
@@ -301,10 +283,9 @@ const ApplyButton = styled.button`
   background-color: var(--color-purple-0);
 `
 
-const ApplyButtonPositioned = styled(ApplyButton)`
-  position: absolute;
-  top: 1rem;
-  right: 1.7rem;
+const HeaderButton = styled(Button)`
+  background-color: #e4e6fe;
+  color: var(--color-purple-0);
 `
 
 const Footer = styled.footer`

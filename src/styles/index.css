@@ -20,3 +20,8 @@ button {
 ul {
   padding: 0;
 }
+
+body {
+  background: rgb(234 234 234);
+  margin: 0;
+}

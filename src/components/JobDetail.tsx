@@ -56,11 +56,12 @@ color: var(--color-gray-detail-font);
         
         display: flex;
         flex: 1 0 100%;
+        flex-wrap: wrap;
         ${mediaHelper().phone(`
           flex: 1 0 auto;
         
         `)}
-        
+      justify-content: center;
       align-items: center;
         ${mediaHelper().tablet(`
         
@@ -68,8 +69,14 @@ color: var(--color-gray-detail-font);
       padding: 0 3rem;
       
         `)}
-      
-      .item-names .item-names--primary {
+        .item-names {
+          margin-bottom: 2rem;
+          ${mediaHelper().phone(`
+            margin-bottom: 0;
+          
+          `)}
+        }
+       .item-names--primary {
           font-size: 1.3rem;
           color: black;
           margin-bottom: .5rem;

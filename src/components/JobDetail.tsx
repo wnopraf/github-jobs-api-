@@ -285,7 +285,11 @@ export const JobDetail: FunctionComponent = () => {
 }
 
 const Button = styled.button`
-  margin-left: auto;
+  margin: 0 auto;
+  ${mediaHelper().phone(`
+    margin: 0 0 0 auto;
+  
+  `)}
   height: max-content;
   color: white;
   font-size: 1.15rem;
@@ -308,12 +312,20 @@ const Footer = styled.footer`
   .footer-content {
     max-width: 760px;
     display: flex;
+    flex-wrap: wrap;
+
     margin: 0 auto;
+
     padding: 1rem 0;
     line-height: 1.45;
 
     .apply-reminder {
       text-transform: capitalize;
+      margin-bottom: 2rem;
+      ${mediaHelper().phone(`
+        margin-bottom: 0;
+      
+      `)}
       h3 {
         margin: 0;
       }
@@ -322,9 +334,6 @@ const Footer = styled.footer`
 
         margin: 0;
       }
-    }
-    button {
-      margin-left: auto;
     }
   }
 `

@@ -22,7 +22,14 @@ margin: 0 auto;
 color: var(--color-gray-detail-font);
   .detail-job--header  {
     display: flex;
-    
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem 0;
+    padding: 1rem 0;
+    ${mediaHelper().phone(`
+      gap: auto;
+      padding: 0;
+    `)}
     background-color: white;
     border-radius: .3rem;
     
@@ -34,6 +41,8 @@ color: var(--color-gray-detail-font);
       background-color: rgb(255 139 227);
       border-bottom-left-radius: .3rem;
       background-repeat: no-repeat;
+      width: 90px;
+      height: 90px;
       ${mediaHelper().tablet(`
       width: 180px;
       height: 180px;
@@ -44,8 +53,14 @@ color: var(--color-gray-detail-font);
     }
     .detail-job--company  {
         padding: 0 1rem;
-        width: 85%;
+        
         display: flex;
+        flex: 1 0 100%;
+        ${mediaHelper().phone(`
+          flex: 1 0 auto;
+        
+        `)}
+        
       align-items: center;
         ${mediaHelper().tablet(`
         
@@ -130,15 +145,14 @@ display: flex;
     color: var(--color-purple-0);
     }
     li{
-      padding: 1rem 0;
-      list-style-position: inside;
+      padding: 1rem 0 0 1rem;
+    list-style-position: outside;
+   
+    margin-left: 1rem;
       &::marker {
         color: var(--color-purple-0);
       }
-      &::before {
-        content: '';
-        margin-right: 1rem;
-      }
+      
     }
 }
 .apply-box {

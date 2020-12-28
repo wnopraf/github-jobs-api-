@@ -90,9 +90,13 @@ export const ToggleBgSwitch: FunctionComponent<{
         barWidth={barwidth}
         onClick={switchHandler}
         onTransitionEnd={() => {
-          console.log('transitionend event')
+          console.log(
+            'transitionend event',
+            'local bg state',
+            switchStateRef.current
+          )
 
-          dispatch(bgSwitchAction(switchStateRef.current))
+          dispatch({ type: switchStateRef.current })
         }}
       >
         <div className="toggle-switcher--switcher"></div>

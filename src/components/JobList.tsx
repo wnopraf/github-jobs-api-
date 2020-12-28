@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { VscLoading } from 'react-icons/vsc'
 import { loadData } from '../state/actions'
 import {
+  BgColor,
   JobsDescription,
   JobSearch,
   LoadDataAction,
@@ -36,7 +37,7 @@ export const AnimatedLoaderIcon = styled.div`
   }
 `
 
-const StyledDiv$jobLists = styled.div`
+const StyledDiv$jobLists = styled.div<{ themeMode: BgColor }>`
   margin-top: 10rem;
   display: grid;
   grid-template-columns: 1fr;
@@ -53,14 +54,18 @@ const StyledDiv$jobLists = styled.div`
 
 `)}
 a {
-    background: white;
+    background: ${(props) =>
+      props.themeMode === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};
     border-radius: 0.45rem;
     text-decoration: none;
     padding: 1rem;
     position: relative;
-    transition: box-shadow 200ms linear;
+    transition: box-shadow, background-color 200ms linear;
     &:hover {
       box-shadow: 0px 0px 10px 0px #0000003d;
+    }
+    h3 {
+      color: ${(props) => (props.themeMode === 'IS_LIGHT' ? 'black' : 'white')};
     }
   }
 `
@@ -72,6 +77,7 @@ export const JobLists: FunctionComponent = () => {
   > = useDispatch()
   const jobs = useSelector<Store, JobsDescription[]>((store) => store.jobs)
   const isLoading = useSelector<Store, Loading>((store) => store.loader)
+  const themeMode = useSelector<Store, BgColor>((store) => store.bgColor)
   console.log(isLoading, 'is loaded')
 
   return isLoading ? (
@@ -79,7 +85,7 @@ export const JobLists: FunctionComponent = () => {
       <VscLoading className="loader-icon" />
     </AnimatedLoaderIcon>
   ) : (
-    <StyledDiv$jobLists>
+    <StyledDiv$jobLists themeMode={themeMode}>
       {jobs.map((el, i) => {
         return (
           <Link to={`/job/${el.id}`} key={i}>

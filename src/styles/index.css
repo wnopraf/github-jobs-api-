@@ -7,6 +7,7 @@
   --color-purple-0: rgb(96 110 247);
   --color-gray-detail-font: rgb(167 167 167);
   --color-gray-body-bg: rgb(234 234 234);
+  --color-bg-darkTheme: rgb(31 31 50);
   font-family: 'Roboto', sans-serif;
 }
 a {

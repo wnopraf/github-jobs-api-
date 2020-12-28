@@ -1,13 +1,15 @@
 import { Link, Router } from '@reach/router'
-import React, { useEffect } from 'react'
-import { Provider } from 'react-redux'
+import React, { Children, FunctionComponent, useEffect } from 'react'
+import { Provider, useSelector } from 'react-redux'
+import { Store } from 'redux'
 import styled from 'styled-components'
 import { Container } from '../components/Container'
 import { Header } from '../components/Header'
 import { JobDetail } from '../components/JobDetail'
 import { MobileJobsForm } from '../components/JobFilter'
 import { store } from '../state'
-import { JobsDescription } from '../types'
+import { IS_LIGHT } from '../state/constants'
+import { JobsDescription, Store as AppStore, BgColor } from '../types'
 import { JobLists } from './JobList'
 const FakeBody = styled.div``
 
@@ -20,16 +22,29 @@ const Home = () => (
   </div>
 )
 
+const BgWrapper = styled.section<{ bg: BgColor }>`
+  transition: background-color 200ms linear;
+  background-color: ${(props) =>
+    props.bg === IS_LIGHT ? 'var(--color-gray-body-bg)' : 'black'};
+`
+const AppWrapper: FunctionComponent = ({ children }) => {
+  const bgColor: BgColor = useSelector<AppStore, BgColor>(
+    (store) => store.bgColor
+  )
+
+  return <BgWrapper bg={bgColor}>{children}</BgWrapper>
+}
 export const App = () => {
   return (
     <Provider store={store}>
-      <Header></Header>
+      <AppWrapper>
+        <Header></Header>
+        <Router>
+          <Home path="/" />
 
-      <Router>
-        <Home path="/" />
-
-        <JobDetail path="/job/:jobId" />
-      </Router>
+          <JobDetail path="/job/:jobId" />
+        </Router>
+      </AppWrapper>
     </Provider>
   )
 }

@@ -1,11 +1,13 @@
 import { time } from 'console'
 import React, { FunctionComponent } from 'react'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { timeAgo } from '../lib/util'
-import { JobsDescription } from '../types'
+import { JobsDescription, BgColor, Store } from '../types'
 
-const StyledArticle$jobItem = styled.article<{ bg: string }>`
-  background: white;
+const StyledArticle$jobItem = styled.article<{
+  bgUrl: string
+}>`
   color: black;
   .job-item--data {
     color: gray;
@@ -29,7 +31,7 @@ const StyledArticle$jobItem = styled.article<{ bg: string }>`
     background-size: contain;
     top: calc(-35px / 2);
     border-radius: 0.5rem;
-    background-image: url(${(props) => props.bg});
+    background-image: url(${(props) => props.bgUrl});
   }
 `
 
@@ -42,7 +44,7 @@ export const JobItem: FunctionComponent<JobsDescription> = ({
   location
 }) => {
   return (
-    <StyledArticle$jobItem bg={company_logo}>
+    <StyledArticle$jobItem bgUrl={company_logo}>
       <p className="job-item--data">
         <span className="job-item--postded-date">{timeAgo(created_at)}</span>
         &nbsp; • &nbsp;

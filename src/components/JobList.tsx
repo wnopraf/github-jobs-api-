@@ -38,7 +38,8 @@ export const AnimatedLoaderIcon = styled.div`
 `
 
 const StyledDiv$jobLists = styled.div<{ themeMode: BgColor }>`
-  margin-top: 10rem;
+  margin-top: 5rem;
+  padding: 3rem 0;
   display: grid;
   grid-template-columns: 1fr;
   grid-auto-rows: auto;

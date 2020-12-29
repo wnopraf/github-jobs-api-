@@ -7,7 +7,7 @@ import { mediaHelper } from '../lib/mediaUtil'
 import { timeAgo } from '../lib/util'
 import { IS_LOADED, IS_LOADING } from '../state/constants'
 
-import { JobsDescription, Store } from '../types'
+import { JobsDescription, Store, BgColor } from '../types'
 import Loader from '../__fixtures__/Loader'
 import { Container } from './Container'
 
@@ -15,10 +15,13 @@ const JobWrapper = styled.div`
   position: relative;
   min-height: 100vh;
 `
-const StyledJob = styled.div<{ bg: string }>`
+const StyledJob = styled.div<{ bgUrl: string; bgTheme: BgColor }>`
 max-width: 760px;
 min-height: 80vh;
 margin: 0 auto;
+h1,h2,h3 {
+  color: ${(props) => (props.bgTheme === 'IS_LIGHT' ? 'black' : 'white')};
+}
 color: var(--color-gray-detail-font);
   .detail-job--header  {
     display: flex;
@@ -30,12 +33,13 @@ color: var(--color-gray-detail-font);
       gap: auto;
       padding: 0;
     `)}
-    background-color: white;
+    background-color: ${(props) =>
+      props.bgTheme === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};;
     border-radius: .3rem;
     
     .detail-job--logo  {
         
-    background-image: url(${(props) => props.bg});
+    background-image: url(${(props) => props.bgUrl});
       background-size: 50%;
       background-position: center center;
       background-color: rgb(255 139 227);
@@ -78,7 +82,7 @@ color: var(--color-gray-detail-font);
         }
        .item-names--primary {
           font-size: 1.3rem;
-          color: black;
+          
           margin-bottom: .5rem;
           text-transform: capitalize;
         
@@ -111,7 +115,8 @@ color: var(--color-gray-detail-font);
   .detail-job--features {
     margin-top: 3rem;
     padding: 1rem 3rem;
-    background: white;
+    background: ${(props) =>
+      props.bgTheme === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};
 }
 .detail-job-summary {
 position: relative;
@@ -127,7 +132,7 @@ display: flex;
     margin:0;
     font-size: 1.6rem;
     margin: -5px 0;
-    color: black;
+    
     text-transform: capitalize;
     letter-spacing: 1px;
     
@@ -144,7 +149,7 @@ display: flex;
 .detail-job--description {
     line-height: 1.65;
     h2 {
-      color: black;
+     
       font-size: 1.2rem;
     }
     a {
@@ -173,7 +178,7 @@ display: flex;
         margin: 0;
         text-transform: capitalize;
         font-size: 1.35rem;
-        
+        color: white;
     }
     .apply-box--info {
         margin-top: 1rem;
@@ -192,7 +197,7 @@ export const JobDetail: FunctionComponent = () => {
   const [jobDescription, setJobDescription] = useState<JobsDescription>()
   const isLoading = useSelector<Store>((state) => state.loader)
   const dispatch = useDispatch()
-
+  const bgTheme = useSelector<Store, BgColor>((store) => store.bgColor)
   const { jobId }: { jobId: string } = useParams()
 
   useEffect(() => {
@@ -221,7 +226,7 @@ export const JobDetail: FunctionComponent = () => {
   ) : (
     <JobWrapper>
       <Container>
-        <StyledJob bg={jobDescription!.company_logo}>
+        <StyledJob bgUrl={jobDescription!.company_logo} bgTheme={bgTheme}>
           <header className="detail-job--header">
             <div className="detail-job--logo"></div>
             <div className="detail-job--company">
@@ -274,7 +279,7 @@ export const JobDetail: FunctionComponent = () => {
           </div>
         </StyledJob>
       </Container>
-      <Footer>
+      <Footer bgTheme={bgTheme}>
         <Container>
           <div className="footer-content">
             <div className="apply-reminder">
@@ -313,8 +318,9 @@ const HeaderButton = styled(Button)`
   color: var(--color-purple-0);
 `
 
-const Footer = styled.footer`
-  background: white;
+const Footer = styled.footer<{ bgTheme: BgColor }>`
+  background: ${(props) =>
+    props.bgTheme === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};
   margin-top: 3rem;
   .footer-content {
     max-width: 760px;
@@ -335,6 +341,7 @@ const Footer = styled.footer`
       `)}
       h3 {
         margin: 0;
+        color: ${(props) => (props.bgTheme === 'IS_LIGHT' ? 'black' : 'white')};
       }
       .apply-reminder--company {
         color: gray;

@@ -21,16 +21,21 @@ import { BiSearchAlt2 } from 'react-icons/bi'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { loadData } from '../state/actions'
-import { JobSearch, LoadDataAction, LoadingAction, Store } from '../types'
+import {
+  JobSearch,
+  LoadDataAction,
+  LoadingAction,
+  Store,
+  BgColor
+} from '../types'
 import { mediaHelper } from '../lib/mediaUtil'
 import { ThunkDispatch } from 'redux-thunk'
 import { useMediaPoint } from '../lib/Hooks'
 import { HeightContext } from './Header'
-import { IS_LOADED, IS_LOADING } from '../state/constants'
+import { IS_LIGHT, IS_LOADED, IS_LOADING } from '../state/constants'
 
 const MobileJobsWrapper = styled.div`
   width: 100%;
-
   margin: 0 auto;
   ${mediaHelper().tablet(`
     max-width: 100%;
@@ -116,6 +121,7 @@ export const MobileJobsForm: FunctionComponent = () => {
 const StyledTextTitle = styled.input<{ control?: string }>`
   padding: 1rem;
   position: absolute;
+  background: inherit;
   ${mediaHelper().tablet(`
     position: static;
   `)}
@@ -189,7 +195,7 @@ export const LocationJobFilter: FunctionComponent<{ control?: string }> = ({
     />
   )
 }
-const StyledCheckInput = styled.div<{ control?: string }>`
+const StyledCheckInput = styled.div<{ control?: string; bgTheme: BgColor }>`
   display: flex;
   align-items: center;
   position: absolute;
@@ -232,13 +238,15 @@ const StyledCheckInput = styled.div<{ control?: string }>`
       height: 25px;
     
     `)}
-    background: rgb(230 229 229);
+    background: ${(props) =>
+      props.bgTheme === 'IS_LIGHT' ? 'rgb(230 229 229)' : 'rgb(59 55 75)'};
     border-radius: 0.2rem;
     cursor: pointer;
   }
   .full-time--label {
     font-weight: bold;
     font-size: 1.3rem;
+    color: ${(props) => (props.bgTheme === 'IS_LIGHT' ? 'black' : 'white')};
     text-transform: capitalize;
     ${mediaHelper().desktop(`
       font-size: 1.1rem;
@@ -253,7 +261,8 @@ const StyledCheckInput = styled.div<{ control?: string }>`
     width: 40%;
     height: 70%;
     margin-bottom: 5px;
-    border: solid darkslategray;
+    border: solid
+      ${(props) => (props.bgTheme === 'IS_LIGHT' ? 'darkslategray' : 'white')};
     border-width: 0 5px 5px 0;
     ${mediaHelper().desktop(`
       border-width: 0 4px 4px 0;
@@ -270,13 +279,14 @@ const StyledCheckInput = styled.div<{ control?: string }>`
     opacity: 1;
   }
 `
-export const FullTimeJobFilter: FunctionComponent<{ control?: string }> = ({
-  control
-}) => {
+export const FullTimeJobFilter: FunctionComponent<{
+  control?: string
+  bgTheme: BgColor
+}> = ({ control, bgTheme }) => {
   const { changeHandler, jobsFormState } = useContext(FormContext)
   const { isDesktop } = useMediaPoint()
   return (
-    <StyledCheckInput control={control}>
+    <StyledCheckInput control={control} bgTheme={bgTheme}>
       <span className="full-time--wrapper">
         <input
           type="checkbox"
@@ -294,7 +304,11 @@ export const FullTimeJobFilter: FunctionComponent<{ control?: string }> = ({
   )
 }
 
-const StyledUlFormPicker = styled.ul<{ isOpen: boolean; liHeight: number }>`
+const StyledUlFormPicker = styled.ul<{
+  isOpen: boolean
+  liHeight: number
+  bgTheme: BgColor
+}>`
   height: ${(props) => (props.isOpen ? props.liHeight * 3 : 0)}px;
   overflow: hidden;
 
@@ -305,10 +319,12 @@ const StyledUlFormPicker = styled.ul<{ isOpen: boolean; liHeight: number }>`
   position: absolute;
   top: 4rem;
   right: 0;
-  background: white;
+  background: ${(props) =>
+    props.bgTheme === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};
+
   box-shadow: 0 0 3px 0px #00000073;
 `
-const StyledDivFilterWrapper = styled.div`
+const StyledDivFilterWrapper = styled.div<{ bgTheme: BgColor }>`
   position: relative;
   
   @media (min-width: 768px) {
@@ -316,7 +332,9 @@ const StyledDivFilterWrapper = styled.div`
   }
   display: flex;
   align-items: center;
-  background: white;
+  background: ${(props) =>
+    props.bgTheme === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};
+    transition: background-color 200ms linear;
     padding: 1rem;
     border-radius: .35rem;
   .filter-icon {
@@ -406,6 +424,7 @@ export const FormPicker = () => {
         return
     }
   }
+  const bgTheme = useSelector<Store, BgColor>((store) => store.bgColor)
 
   const getDataHandler: ReactEventHandler = async (e) => {
     loadingDispatch({ type: 'IS_LOADING' })
@@ -416,15 +435,16 @@ export const FormPicker = () => {
   }
 
   return (
-    <StyledDivFilterWrapper>
+    <StyledDivFilterWrapper bgTheme={bgTheme}>
       <TitleJobFilter control={pickedForm} />
       <LocationJobFilter control={pickedForm} />
-      <FullTimeJobFilter control={pickedForm} />
+      <FullTimeJobFilter control={pickedForm} bgTheme={bgTheme} />
       <span className="filter-icon">
         <TiFilter onClick={openFilterHandler} />
         <StyledUlFormPicker
           isOpen={isopen}
           liHeight={liHeight}
+          bgTheme={bgTheme}
           onClick={selectionHandler}
         >
           <li ref={computeHeight} data-job-filter="title">
@@ -441,12 +461,13 @@ export const FormPicker = () => {
     </StyledDivFilterWrapper>
   )
 }
-const StyledFormTabletWrapper = styled.div`
+const StyledFormTabletWrapper = styled.div<{ bgTheme: BgColor }>`
   display: none;
   ${mediaHelper().tablet(`
   display: flex;`)}
   align-items: center;
-  background: white;
+  background: ${(props) =>
+    props.bgTheme === IS_LIGHT ? 'white' : 'var(--color-bg-darkTheme)'};
 
   border-radius: 0.35rem;
 
@@ -476,7 +497,9 @@ const StyledFormTabletWrapper = styled.div`
     min-width: 90px;
     width: 30%;
     &:not(.full-time) {
-      border-right: 1px solid gainsboro;
+      border-right: 1px solid
+        ${(props) =>
+          props.bgTheme === IS_LIGHT ? 'gainsboro' : 'rgb(59 55 75)'};
     }
     height: 90px;
     padding: 1rem;
@@ -506,7 +529,7 @@ export const TabletFormInputs = () => {
   > = useDispatch()
   const loadingDispatch = useDispatch<Dispatch<LoadingAction>>()
   const { dispatch, jobsFormState } = useContext(FormContext)
-
+  const bgTheme = useSelector<Store, BgColor>((store) => store.bgColor)
   const clickLoadDataHandler: ReactEventHandler = async () => {
     loadingDispatch({ type: IS_LOADING })
     await thunkDispatch(loadData(jobsFormState))
@@ -515,7 +538,7 @@ export const TabletFormInputs = () => {
   }
   console.log('form state', jobsFormState)
   return (
-    <StyledFormTabletWrapper>
+    <StyledFormTabletWrapper bgTheme={bgTheme}>
       <div className="title">
         <BiSearchAlt2 className="input-icon" />
         <TitleJobFilter />
@@ -525,7 +548,7 @@ export const TabletFormInputs = () => {
         <LocationJobFilter />
       </div>
       <div className="full-time">
-        <FullTimeJobFilter />
+        <FullTimeJobFilter bgTheme={bgTheme} />
         <span className="search" onClick={clickLoadDataHandler}>
           search
         </span>

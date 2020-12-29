@@ -11,15 +11,17 @@ import { store } from '../state'
 import { IS_LIGHT } from '../state/constants'
 import { JobsDescription, Store as AppStore, BgColor } from '../types'
 import { JobLists } from './JobList'
-const FakeBody = styled.div``
+const StyledHome = styled.div`
+  min-height: 100vh;
+`
 
 const Home = () => (
-  <div className="home">
+  <StyledHome>
     <Container>
       <MobileJobsForm />
       <JobLists />
     </Container>
-  </div>
+  </StyledHome>
 )
 
 const BgWrapper = styled.section<{ bg: BgColor }>`

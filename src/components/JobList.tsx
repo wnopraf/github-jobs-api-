@@ -63,7 +63,9 @@ a {
     position: relative;
     transition: box-shadow, background-color 200ms linear;
     &:hover {
-      box-shadow: 0px 0px 10px 0px #0000003d;
+      box-shadow: 0px 0px 10px 0px
+        ${(props) =>
+          props.themeMode === 'IS_LIGHT' ? '#0000003d' : 'rgb(117 117 208)'};
     }
     h3 {
       color: ${(props) => (props.themeMode === 'IS_LIGHT' ? 'black' : 'white')};

@@ -14,7 +14,7 @@ import React, {
 } from 'react'
 
 import { Action } from 'redux'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { TiFilter } from 'react-icons/ti'
 import { MdLocationOn } from 'react-icons/md'
 import { BiSearchAlt2 } from 'react-icons/bi'
@@ -34,7 +34,9 @@ import { useMediaPoint } from '../lib/Hooks'
 import { HeightContext } from './Header'
 import { IS_LIGHT, IS_LOADED, IS_LOADING } from '../state/constants'
 
-const MobileJobsWrapper = styled.div`
+const MobileJobsWrapper = styled.div<{
+  nodeLength: (node: HTMLElement) => void
+}>`
   width: 100%;
   margin: 0 auto;
   ${mediaHelper().tablet(`
@@ -110,7 +112,7 @@ export const MobileJobsForm: FunctionComponent = () => {
 
   return (
     <FormContext.Provider value={{ changeHandler, dispatch, jobsFormState }}>
-      <MobileJobsWrapper ref={heightMeasurer}>
+      <MobileJobsWrapper nodeLength={heightMeasurer}>
         <FormPicker />
         <TabletFormInputs />
       </MobileJobsWrapper>
@@ -118,10 +120,11 @@ export const MobileJobsForm: FunctionComponent = () => {
   )
 }
 
-const StyledTextTitle = styled.input<{ control?: string }>`
+const StyledTextTitle = styled.input<{ control?: string; bgTheme: BgColor }>`
   padding: 1rem;
   position: absolute;
   background: inherit;
+  color: ${(props) => (props.bgTheme === 'IS_DARK' ? 'gray' : 'black')};
   ${mediaHelper().tablet(`
     position: static;
   `)}
@@ -154,9 +157,10 @@ const StyledTextLocation = styled(StyledTextTitle)`
     z-index: 0;
   `)}
 `
-export const TitleJobFilter: FunctionComponent<{ control?: string }> = ({
-  control
-}) => {
+export const TitleJobFilter: FunctionComponent<{
+  control?: string
+  bgTheme: BgColor
+}> = ({ control, bgTheme }) => {
   const { changeHandler, jobsFormState } = useContext(FormContext)
   console.log('filter title', jobsFormState.title)
   const { isDesktop } = useMediaPoint()
@@ -174,13 +178,15 @@ export const TitleJobFilter: FunctionComponent<{ control?: string }> = ({
           : 'Filter by title...'
       }
       control={control}
+      bgTheme={bgTheme}
     />
   )
 }
 
-export const LocationJobFilter: FunctionComponent<{ control?: string }> = ({
-  control
-}) => {
+export const LocationJobFilter: FunctionComponent<{
+  control?: string
+  bgTheme: BgColor
+}> = ({ control, bgTheme }) => {
   const { changeHandler, jobsFormState } = useContext(FormContext)
 
   return (
@@ -192,6 +198,7 @@ export const LocationJobFilter: FunctionComponent<{ control?: string }> = ({
       className="location-input"
       placeholder="Filter by location..."
       control={control}
+      bgTheme={bgTheme}
     />
   )
 }
@@ -436,8 +443,8 @@ export const FormPicker = () => {
 
   return (
     <StyledDivFilterWrapper bgTheme={bgTheme}>
-      <TitleJobFilter control={pickedForm} />
-      <LocationJobFilter control={pickedForm} />
+      <TitleJobFilter control={pickedForm} bgTheme={bgTheme} />
+      <LocationJobFilter control={pickedForm} bgTheme={bgTheme} />
       <FullTimeJobFilter control={pickedForm} bgTheme={bgTheme} />
       <span className="filter-icon">
         <TiFilter onClick={openFilterHandler} />
@@ -541,11 +548,11 @@ export const TabletFormInputs = () => {
     <StyledFormTabletWrapper bgTheme={bgTheme}>
       <div className="title">
         <BiSearchAlt2 className="input-icon" />
-        <TitleJobFilter />
+        <TitleJobFilter bgTheme={bgTheme} />
       </div>
       <div className="location">
         <MdLocationOn className="input-icon" />
-        <LocationJobFilter />
+        <LocationJobFilter bgTheme={bgTheme} />
       </div>
       <div className="full-time">
         <FullTimeJobFilter bgTheme={bgTheme} />

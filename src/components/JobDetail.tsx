@@ -24,61 +24,70 @@ h1,h2,h3 {
 }
 color: var(--color-gray-detail-font);
   .detail-job--header  {
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: 1rem 0;
-    padding: 1rem 0;
-    ${mediaHelper().phone(`
-      gap: auto;
-      padding: 0;
+    ${mediaHelper().tablet(`
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    border-radius: 0;
+    border-bottom-left-radius: .8rem;
+    
     `)}
+    padding: 1rem 0;
+    
     background-color: ${(props) =>
       props.bgTheme === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};;
     border-radius: .3rem;
     
     .detail-job--logo  {
-        
+        position: absolute;
+        top: -22.5px;
     background-image: url(${(props) => props.bgUrl});
       background-size: 50%;
       background-position: center center;
-      background-color: rgb(255 139 227);
-      border-bottom-left-radius: .3rem;
+      background-color: rgb(255 139 227);    
       background-repeat: no-repeat;
-      width: 90px;
-      height: 90px;
+      border-radius: .8rem;
+      width: 45px;
+      height: 45px;
       ${mediaHelper().tablet(`
       width: 180px;
       height: 180px;
       
+      position: static;
+    
+    border-radius: 0 0 0 .8rem;
       
       `)}
       
     }
     .detail-job--company  {
         padding: 0 1rem;
-        
+        margin-top: 2rem;
         display: flex;
-        flex: 1 0 100%;
-        flex-wrap: wrap;
-        ${mediaHelper().phone(`
-          flex: 1 0 auto;
-        
-        `)}
+        flex-direction: column;
       justify-content: center;
       align-items: center;
         ${mediaHelper().tablet(`
+        justify-content: space-between;
+        flex-direction: row;
+        flex: 1;
+        margin: 0;
         
-        
-      padding: 0 3rem;
+        padding: 0 3rem;
       
         `)}
         .item-names {
           margin-bottom: 2rem;
-          ${mediaHelper().phone(`
-            margin-bottom: 0;
-          
-          `)}
+          ${mediaHelper().tablet(`
+          margin-bottom: 0;
+    
+    `)}
         }
        .item-names--primary {
           font-size: 1.3rem;
@@ -119,11 +128,19 @@ color: var(--color-gray-detail-font);
       props.bgTheme === 'IS_LIGHT' ? 'white' : 'var(--color-bg-darkTheme)'};
 }
 .detail-job-summary {
-position: relative;
-display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+  ${mediaHelper().tablet(`
+    flex-direction: row;
+    align-items: center; 
+    row-gap: 1rem;
+    
+  `)}
+  
+}
+  
 .detail-job--posted-date {
     margin: 0;
     font-weight: 500;
@@ -131,6 +148,9 @@ display: flex;
 .detail-job--title {
     margin:0;
     font-size: 1.6rem;
+    ${mediaHelper().tablet(`
+      font-size: 1.25rem;
+  `)}
     margin: -5px 0;
     
     text-transform: capitalize;
@@ -297,10 +317,12 @@ export const JobDetail: FunctionComponent = () => {
 }
 
 const Button = styled.button`
-  margin: 0 auto;
-  ${mediaHelper().phone(`
-    margin: 0 0 0 auto;
-  
+  width: 100%;
+  ${mediaHelper().tablet(`
+  font-size: 1rem;
+  padding: 1rem 1.20rem;
+  margin-left: auto;
+  width: auto;
   `)}
   height: max-content;
   color: white;
@@ -325,11 +347,16 @@ const Footer = styled.footer<{ bgTheme: BgColor }>`
   .footer-content {
     max-width: 760px;
     display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
     flex-wrap: wrap;
-
+    ${mediaHelper().tablet(`
+      flex-direction: row;
+    
+    `)}
     margin: 0 auto;
 
-    padding: 1rem 0;
+    padding: 1.25rem 0;
     line-height: 1.45;
 
     .apply-reminder {
